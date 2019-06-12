@@ -21,10 +21,16 @@ export let dom = {
         // it adds necessary event listeners also
 
         let boardList = '';
-
         for(let board of boards){
             boardList += `
-                <section class="board-item">${board.title}</section>
+                <section class="board">
+                <div class="board-header"><span id="${board.id}" class="board-title">${board.title}</span>
+                    <button class="board-add">Add Card</button>
+                    <button class="board-toggle"><i class="fas fa-chevron-down">WAKE ME UP</i></button>
+                </div>
+                <div class="board-columns">
+                </div>
+                </section>
             `;
         }
 
@@ -33,13 +39,14 @@ export let dom = {
                 ${boardList}
             </div>
         `;
-        const createdBoards = document.querySelectorAll('.board-item');
-        for (let board of createdBoards) {
-            board.addEventListener('click', toggleBoard)
-        }
 
         const boardContainer = document.querySelector("#boards");
-        boardContainer.insertAdjacentHTML('beforeend', outerHtml)
+        boardContainer.insertAdjacentHTML('beforeend', outerHtml);
+
+        const toggleButtons = document.querySelectorAll('.board-toggle');
+        for (let button of toggleButtons) {
+            button.addEventListener('click', dom.toggleBoard)
+        }
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -49,10 +56,32 @@ export let dom = {
         // it adds necessary event listeners also
     },
     // here comes more features
-    loadStatuses: function () {
-
+    clearStatusContainer: function () {
+        const statusContainer = document.querySelector();
     },
-    showStatuses: function () {
-
+    loadStatuses: function () {
+        dataHandler.getStatuses(function (statuses) {
+            dom.clearStatusContainer();
+            dom.showStatuses(statuses);
+            });
+    },
+    showStatuses: function (statuses) {
+        let statusList = '';
+        for (status of statuses) {
+            statusList += `
+                <div class="board-column">
+                    <div class="board-column-title">${status["title"]}</div>
+                    <div class="board-column-content">
+                    </div>
+                </div>     
+            `;
+            console.log(this);
+        }},
+    toggleBoard: function () {
+        const button = event.target;
+        button.innerHTML = "AWOKEN";
+        console.log(button.parentElement.parentElement.firstElementChild);
+        //dom.loadStatuses();
     }
+
 };
