@@ -24,11 +24,11 @@ export let dom = {
         for(let board of boards){
             boardList += `
                 <section class="board">
-                <div class="board-header"><span id="${board.id}" class="board-title">${board.title}</span>
+                <div class="board-header"><span class="board-title">${board.title}</span>
                     <button class="board-add">Add Card</button>
                     <button class="board-toggle"><i class="fas fa-chevron-down">WAKE ME UP</i></button>
                 </div>
-                <div class="board-columns">
+                <div id="${board.id}" class="board-columns">
                 </div>
                 </section>
             `;
@@ -56,32 +56,42 @@ export let dom = {
         // it adds necessary event listeners also
     },
     // here comes more features
-    clearStatusContainer: function () {
-        const statusContainer = document.querySelector();
+    clearStatusContainer: function (boardId) {
+        const statusContainer = document.getElementById(boardId);
+        statusContainer.innerHTML = '';
+
     },
-    loadStatuses: function () {
+    loadStatuses: function (boardId) {
         dataHandler.getStatuses(function (statuses) {
-            dom.clearStatusContainer();
-            dom.showStatuses(statuses);
+            dom.clearStatusContainer(boardId);
+            dom.showStatuses(statuses, boardId);
             });
     },
-    showStatuses: function (statuses) {
+    showStatuses: function (statuses, boardId) {
         let statusList = '';
-        for (status of statuses) {
+        for (let status of statuses) {
             statusList += `
                 <div class="board-column">
-                    <div class="board-column-title">${status["title"]}</div>
+                    <div id="${status.id} class="board-column-title">${status.title}</div>
                     <div class="board-column-content">
                     </div>
                 </div>     
             `;
-            console.log(this);
+        const statusContainer = document.getElementById(boardId);
+        statusContainer.innerHTML = statusList;
         }},
     toggleBoard: function () {
-        const button = event.target;
-        button.innerHTML = "AWOKEN";
-        console.log(button.parentElement.parentElement.firstElementChild);
-        //dom.loadStatuses();
+        const button = event.currentTarget,
+              boardId = button.closest(".board").lastElementChild.id;
+        if (button.innerHTML === "AWOKEN") {
+            button.innerHTML = "WAKE ME UP";
+            dom.clearStatusContainer(boardId)
+        }
+        else {
+            button.innerHTML = "AWOKEN";
+            dom.loadStatuses(boardId);
+        }
+
     }
 
 };
