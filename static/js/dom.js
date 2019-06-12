@@ -24,15 +24,19 @@ export let dom = {
 
         for(let board of boards){
             boardList += `
-                <li>${board.title}</li>
+                <section class="board-item">${board.title}</section>
             `;
         }
 
         const outerHtml = `
-            <ul class="board-container">
+            <div class="board-container">
                 ${boardList}
-            </ul>
+            </div>
         `;
+        const createdBoards = document.querySelectorAll('.board-item');
+        for (let board of createdBoards) {
+            board.addEventListener('click', toggleBoard)
+        }
 
         const boardContainer = document.querySelector("#boards");
         boardContainer.insertAdjacentHTML('beforeend', outerHtml)
@@ -45,4 +49,10 @@ export let dom = {
         // it adds necessary event listeners also
     },
     // here comes more features
+    loadStatuses: function () {
+
+    },
+    showStatuses: function () {
+
+    }
 };
