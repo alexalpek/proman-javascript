@@ -82,7 +82,7 @@ export let dom = {
                     cardContainer = document.getElementById(parentStatusId);
                 cardContainer.innerHTML += `
                 <div class="card">
-                  <div class="card-remove"><button><i class="fas fa-trash-alt"></button></i></div>
+                  <div  class="card-remove"><button><img style="height: 20px" src="/static/images/delete.png" alt="remove card"></button></div>
                   <div class="card-title">${card.title}</div>
                   <div id="${parentStatusId}-${card.id}" class="card-content"</div>
                 </div>`
