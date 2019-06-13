@@ -65,7 +65,6 @@ export let dom = {
         for (let element of parentBoard.children) {
             statusIds.push(element.id);
         }
-<<<<<<< HEAD
         console.log(statusIds);
         for (let card of cards) {
             if (statusIds.indexOf("status_" + `${card.status_id}`)) {
@@ -74,7 +73,6 @@ export let dom = {
 
             }
         }
-=======
         for (const card of cards) {
             console.log(card);
             const status = `${boardId}-status-`.concat(card.status_id),
@@ -90,7 +88,6 @@ export let dom = {
                   <div id="${parentStatusId}-${card.id}" class="card-content"</div>
                 </div>`
             }}
->>>>>>> cards done
 
 
     },
