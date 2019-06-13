@@ -26,7 +26,7 @@ export let dom = {
                 <section class="board">
                 <div class="board-header"><span class="board-title">${board.title}</span>
                     <button class="board-add">Add Card</button>
-                    <button class="board-toggle"><i class="fas fa-chevron-down">WAKE ME UP</i></button>
+                    <button data-toggle="" class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
                 </div>
                 <div id="board-${board.id}" class="board-columns">
                 </div>
@@ -65,11 +65,9 @@ export let dom = {
         for (let element of parentBoard.children) {
             statusIds.push(element.id);
         }
-        console.log(statusIds);
         for (let card of cards) {
             if (statusIds.indexOf("status_" + `${card.status_id}`)) {
                 let parentStatusId = statusIds.indexOf(card.status_id);
-                console.log(parentStatusId);
 
             }
         }
@@ -82,7 +80,7 @@ export let dom = {
                     cardContainer = document.getElementById(parentStatusId);
                 cardContainer.innerHTML += `
                 <div class="card">
-                  <div  class="card-remove"><button><img style="height: 20px" src="/static/images/delete.png" alt="remove card"></button></div>
+                  <div  class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
                   <div class="card-title">${card.title}</div>
                   <div id="${parentStatusId}-${card.id}" class="card-content"</div>
                 </div>`
@@ -119,11 +117,14 @@ export let dom = {
     toggleBoard: function () {
         const button = event.currentTarget,
             boardId = button.closest(".board").lastElementChild.id;
-        if (button.innerHTML === "AWOKEN") {
-            button.innerHTML = "WAKE ME UP";
+        console.log(button);
+        if (button.dataset.toggle === "visible") {
+            button.dataset.toggle = "not-visible";
+            button.innerHTML = `<img class="icon" src="/static/images/close.png" alt="close" >`;
             dom.clearStatusContainer(boardId)
         } else {
-            button.innerHTML = "AWOKEN";
+            button.dataset.toggle = "visible";
+            button.innerHTML= `<img class="icon" src="/static/images/view.png" alt="view" >`;
             dom.loadStatuses(boardId);
         }
 
