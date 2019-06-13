@@ -28,7 +28,7 @@ export let dom = {
                     <button class="board-add">Add Card</button>
                     <button class="board-toggle"><i class="fas fa-chevron-down">WAKE ME UP</i></button>
                 </div>
-                <div id="board${board.id}" class="board-columns">
+                <div id="board-${board.id}" class="board-columns">
                 </div>
                 </section>
             `;
@@ -59,18 +59,24 @@ export let dom = {
         // shows the cards of a board
         // it adds necessary event listeners also
         const parentBoard = document.getElementById(boardId);
-        console.log(parentBoard);
         let statusIds = [];
         for (let element of parentBoard.children) {
-            console.log(element.id);
             statusIds.push(element.id);
         }
-        console.log(statusIds);
-        for (let card of cards) {
-            if (statusIds.indexOf("status_" + `${card.status_id}`)) {
-                let parentStatusId = statusIds.indexOf(card.status_id)
-                console.log(parentStatusId);
+        for (const card of cards) {
+            console.log(card);
+            const status = `${boardId}-status-`.concat(card.status_id),
+                statusIndex = statusIds.indexOf(status);
+            if (statusIndex === 0 || statusIndex !== 0 && statusIndex > -1) {
 
+                const parentStatusId = `${boardId}-status-`.concat(statusIndex),
+                    cardContainer = document.getElementById(parentStatusId);
+                cardContainer.innerHTML += `
+                <div class="card">
+                  <div class="card-remove"><button><i class="fas fa-trash-alt"></button></i></div>
+                  <div class="card-title">${card.title}</div>
+                  <div id="${parentStatusId}-${card.id}" class="card-content"</div>
+                </div>`
             }}
 
 
@@ -91,9 +97,9 @@ export let dom = {
         let statusList = '';
         for (let status of statuses) {
             statusList += `
-                <div id="status_${status.title}" class="board-column">
+                <div id="${boardId}-status-${status.title}" class="board-column">
                     <div class="board-column-title">${status.title}</div>
-                    <div id="status_${status.id}" class="board-column-content">
+                    <div id="${boardId}-status-${status.id}" class="board-column-content">
                     </div>
                 </div>     
             `;
