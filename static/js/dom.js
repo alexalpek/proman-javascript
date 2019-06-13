@@ -1,5 +1,5 @@
 // It uses data_handler.js to visualize elements
-import { dataHandler } from "./data_handler.js";
+import {dataHandler} from "./data_handler.js";
 
 export let dom = {
     init: function () {
@@ -36,6 +36,8 @@ export let dom = {
 
         const outerHtml = `
             <div class="board-container">
+                        <div><button id="add-board" class="board-add">Add Board</button></div>
+
                 ${boardList}
             </div>
         `;
@@ -45,10 +47,12 @@ export let dom = {
 
         const toggleButtons = document.querySelectorAll('.board-toggle');
         for (let button of toggleButtons) {
-            button.addEventListener('click', function () {
-                dom.toggleBoard()
+            button.addEventListener('click', function (event) {
+                dom.toggleBoard(event)
             })
         }
+        dom.addBoard();
+
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -78,7 +82,8 @@ export let dom = {
                   <div class="card-title">${card.title}</div>
                   <div id="${parentStatusId}-${card.id}" class="card-content"</div>
                 </div>`
-            }}
+            }
+        }
 
 
     },
@@ -108,7 +113,7 @@ export let dom = {
             statusContainer.innerHTML = statusList;
         }
     },
-    toggleBoard: function () {
+    toggleBoard: function (event) {
         const button = event.currentTarget,
             boardId = button.closest(".board").lastElementChild.id;
         if (button.innerHTML === "AWOKEN") {
@@ -119,6 +124,25 @@ export let dom = {
             dom.loadStatuses(boardId);
         }
 
-    }
+    },
 
+    addBoard: function () {
+        const addButton = document.querySelector('#add-board');
+        console.log();
+        addButton.addEventListener('click', function () {
+            const boardNumber = document.querySelectorAll('.board').length + 1;
+            let newSection = document.createElement('section');
+            newSection.classList.add('board');
+            newSection.innerHTML = `<div class="board-header"><span class="board-title">Board ${boardNumber}</span>
+                    <button class="board-add">Add Card</button>
+                    <button class="board-toggle"><i class="fas fa-chevron-down">WAKE ME UP</i></button>
+                </div>
+                <div id="board-${boardNumber}" class="board-columns">
+                </div>`;
+            document.querySelector('.board-container').appendChild(newSection);
+            let lastToggleButton = document.querySelector('.board:last-child .board-toggle');
+            console.log(lastToggleButton);
+            lastToggleButton.addEventListener('click', dom.toggleBoard);
+        });
+    },
 };
