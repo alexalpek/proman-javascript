@@ -59,14 +59,17 @@ export let dom = {
         // shows the cards of a board
         // it adds necessary event listeners also
         const parentBoard = document.getElementById(boardId);
+        console.log(parentBoard);
         let statusIds = [];
         for (let element of parentBoard.children) {
+            console.log(element.id);
             statusIds.push(element.id);
         }
-
+        console.log(statusIds);
         for (let card of cards) {
-            if (statusIds.indexOf(card.status_id)) {
+            if (statusIds.indexOf("status_" + `${card.status_id}`)) {
                 let parentStatusId = statusIds.indexOf(card.status_id)
+                console.log(parentStatusId);
 
             }}
 
@@ -95,7 +98,6 @@ export let dom = {
                 </div>     
             `;
         const statusContainer = document.getElementById(boardId);
-            console.log(statusContainer);
             statusContainer.innerHTML = statusList;
         }},
     toggleBoard: function () {
