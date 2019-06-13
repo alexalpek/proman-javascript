@@ -74,7 +74,6 @@ export let dom = {
             }
         }
         for (const card of cards) {
-            console.log(card);
             const status = `${boardId}-status-`.concat(card.status_id),
                 statusIndex = statusIds.indexOf(status);
             if (statusIndex === 0 || statusIndex !== 0 && statusIndex > -1) {
