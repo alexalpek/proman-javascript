@@ -100,7 +100,7 @@ section.board{
 }
 
 .board-column:nth-of-type(1) .card{
-    background: var(--status-1);-
+    background: var(--status-1);
 }
 
 .board-column:nth-of-type(2) .card{

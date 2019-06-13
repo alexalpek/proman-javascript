@@ -5,13 +5,13 @@ export let dom = {
     init: function () {
         // This function should run once, when the page is loaded.
     },
-    clearBoardContainer : function(){
+    clearBoardContainer: function () {
         const boardContainer = document.querySelector('#boards');
         boardContainer.innerHTML = '';
     },
     loadBoards: function () {
         // retrieves boards and makes showBoards called
-        dataHandler.getBoards(function(boards){
+        dataHandler.getBoards(function (boards) {
             dom.clearBoardContainer();
             dom.showBoards(boards);
         });
@@ -21,7 +21,7 @@ export let dom = {
         // it adds necessary event listeners also
 
         let boardList = '';
-        for(let board of boards){
+        for (let board of boards) {
             boardList += `
                 <section class="board">
                 <div class="board-header"><span class="board-title">${board.title}</span>
@@ -45,7 +45,9 @@ export let dom = {
 
         const toggleButtons = document.querySelectorAll('.board-toggle');
         for (let button of toggleButtons) {
-            button.addEventListener('click', dom.toggleBoard)
+            button.addEventListener('click', function () {
+                dom.toggleBoard()
+            })
         }
     },
     loadCards: function (boardId) {
@@ -91,7 +93,7 @@ export let dom = {
             dom.clearStatusContainer(boardId);
             dom.showStatuses(statuses, boardId);
             dom.loadCards(boardId)
-            });
+        });
     },
     showStatuses: function (statuses, boardId) {
         let statusList = '';
@@ -103,17 +105,17 @@ export let dom = {
                     </div>
                 </div>     
             `;
-        const statusContainer = document.getElementById(boardId);
+            const statusContainer = document.getElementById(boardId);
             statusContainer.innerHTML = statusList;
-        }},
+        }
+    },
     toggleBoard: function () {
         const button = event.currentTarget,
-              boardId = button.closest(".board").lastElementChild.id;
+            boardId = button.closest(".board").lastElementChild.id;
         if (button.innerHTML === "AWOKEN") {
             button.innerHTML = "WAKE ME UP";
             dom.clearStatusContainer(boardId)
-        }
-        else {
+        } else {
             button.innerHTML = "AWOKEN";
             dom.loadStatuses(boardId);
         }
