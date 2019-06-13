@@ -26,7 +26,7 @@ export let dom = {
                 <section class="board">
                 <div class="board-header"><span class="board-title">${board.title}</span>
                     <button class="board-add">Add Card</button>
-                    <button class="board-toggle"><i class="fas fa-chevron-down">WAKE ME UP</i></button>
+                    <button data-toggle="" class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
                 </div>
                 <div id="board-${board.id}" class="board-columns">
                 </div>
@@ -78,7 +78,7 @@ export let dom = {
                     cardContainer = document.getElementById(parentStatusId);
                 cardContainer.innerHTML += `
                 <div class="card">
-                  <div class="card-remove"><button><i class="fas fa-trash-alt"></button></i></div>
+                  <div  class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
                   <div class="card-title">${card.title}</div>
                   <div id="${parentStatusId}-${card.id}" class="card-content"</div>
                 </div>`
@@ -116,11 +116,13 @@ export let dom = {
     toggleBoard: function (event) {
         const button = event.currentTarget,
             boardId = button.closest(".board").lastElementChild.id;
-        if (button.innerHTML === "AWOKEN") {
-            button.innerHTML = "WAKE ME UP";
+        if (button.dataset.toggle === "visible") {
+            button.dataset.toggle = "not-visible";
+            button.innerHTML = `<img class="icon" src="/static/images/close.png" alt="close" >`;
             dom.clearStatusContainer(boardId)
         } else {
-            button.innerHTML = "AWOKEN";
+            button.dataset.toggle = "visible";
+            button.innerHTML= `<img class="icon" src="/static/images/view.png" alt="view" >`;
             dom.loadStatuses(boardId);
         }
 
@@ -128,20 +130,18 @@ export let dom = {
 
     addBoard: function () {
         const addButton = document.querySelector('#add-board');
-        console.log();
         addButton.addEventListener('click', function () {
             const boardNumber = document.querySelectorAll('.board').length + 1;
             let newSection = document.createElement('section');
             newSection.classList.add('board');
             newSection.innerHTML = `<div class="board-header"><span class="board-title">Board ${boardNumber}</span>
                     <button class="board-add">Add Card</button>
-                    <button class="board-toggle"><i class="fas fa-chevron-down">WAKE ME UP</i></button>
+                    <button class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
                 </div>
                 <div id="board-${boardNumber}" class="board-columns">
                 </div>`;
             document.querySelector('.board-container').appendChild(newSection);
             let lastToggleButton = document.querySelector('.board:last-child .board-toggle');
-            console.log(lastToggleButton);
             lastToggleButton.addEventListener('click', dom.toggleBoard);
         });
     },
