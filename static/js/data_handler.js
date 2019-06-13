@@ -19,6 +19,14 @@ export let dataHandler = {
     _api_post: function (url, data, callback) {
         // it is not called from outside
         // sends the data to the API, and calls callback function
+
+        fetch(url, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(json_response => callback(json_response));
     },
     init: function () {
     },
@@ -34,6 +42,19 @@ export let dataHandler = {
     },
     getBoard: function (boardId, callback) {
         // the board is retrieved and then the callback function is called with the board
+        this._api_get('/get-boards', (response) => {
+            this._data = response;
+            for (let board of response) {
+                if (board.id === boardId) {
+                    callback(board);
+                }
+            }
+        });
+    },
+    renameBoard: function (boardId, boardTitle) {
+        this._api_post('/board/<int:board_id>', (response) => {
+            this._data = response;
+        }, console.log)
     },
     getStatuses: function (callback) {
         // the statuses are retrieved and then the callback function is called with the statuses

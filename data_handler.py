@@ -11,6 +11,16 @@ def get_card_status(status_id):
     return next((status['title'] for status in statuses if status['id'] == str(status_id)), 'Unknown')
 
 
+def get_board(board_id):
+    """
+    Get board by id
+    :param board_id:
+    :return:
+    """
+    boards = persistence.get_boards()
+    return next((board['title'] for board in boards if board['id'] == str(board_id)), 'Unknown')
+
+
 def get_boards():
     """
     Gather all boards

@@ -43,6 +43,8 @@ export let dom = {
         const boardContainer = document.querySelector("#boards");
         boardContainer.insertAdjacentHTML('beforeend', outerHtml);
 
+        dom.changeTitleToInputAndButton();
+
         const toggleButtons = document.querySelectorAll('.board-toggle');
         for (let button of toggleButtons) {
             button.addEventListener('click', dom.toggleBoard)
@@ -92,6 +94,60 @@ export let dom = {
             dom.loadStatuses(boardId);
         }
 
-    }
+    },
+    replaceTag: function (parentElement, tagToChange, tagToPutIn) {
+        parentElement.replaceChild(tagToPutIn, tagToChange);
+    },
+    createForm: function () {
+        const form = document.createElement('form');
+        form.setAttribute('id', 'postData');
+        form.setAttribute('method', 'post');
 
+        const input = document.createElement('input');
+        input.setAttribute('class', 'board-title');
+        input.setAttribute('id', 'title-input');
+        input.setAttribute('name', 'title-input');
+        form.appendChild(input);
+
+        const submit = document.createElement('input');
+        submit.setAttribute('class', 'save-btn');
+        submit.setAttribute('type', 'submit');
+        submit.setAttribute('value', 'Save');
+        //dom.makeButtonSave(submit);
+        form.appendChild(submit);
+
+        form.addEventListener('submit', dom.postData);
+
+        return form;
+    },
+    changeTitleToInputAndButton: function () {
+        const boardTitles = document.querySelectorAll('.board-title');
+        for (let boardTitle of boardTitles) {
+
+            let parentElement = boardTitle.parentElement;
+            boardTitle.addEventListener('click', function() {
+                if (dom.checkIfQueryExists('#title-input') === null) {
+                    dom.replaceTag(parentElement, boardTitle, dom.createForm());
+                }
+            });
+        }
+    },
+    /*makeButtonSave: function (button) {
+        button.addEventListener('click', function() {
+            const titleInputBox = document.querySelector('#title-input');
+            const newTitle = titleInputBox.value;
+            const id = titleInputBox.parentElement.parentElement.nextElementSibling.id;
+            dataHandler.renameBoard(id, newTitle);
+        });
+    },*/
+    postData: function (event) {
+        event.preventDefault();
+
+        const title = document.querySelector('#title-input');
+
+        dataHandler.renameBoard(3, title);
+    },
+    checkIfQueryExists: function (query) {
+        return document.querySelector(query);
+    },
 };
