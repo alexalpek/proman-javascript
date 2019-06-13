@@ -6,6 +6,10 @@
     --status-4: #085900;
 }
 
+#add-board {
+
+}
+
 body{
     min-width: 620px;
     background: #ddd url(http://cdn.backgroundhost.com/backgrounds/subtlepatterns/diagonal-noise.png);
