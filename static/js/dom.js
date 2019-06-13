@@ -28,7 +28,7 @@ export let dom = {
                     <button class="board-add">Add Card</button>
                     <button class="board-toggle"><i class="fas fa-chevron-down">WAKE ME UP</i></button>
                 </div>
-                <div id="${board.id}" class="board-columns">
+                <div id="board${board.id}" class="board-columns">
                 </div>
                 </section>
             `;
@@ -50,12 +50,28 @@ export let dom = {
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
+
+        dataHandler.getCardsByBoardId(boardId, function (cards) {
+            dom.showCards(cards, boardId)
+        })
     },
-    showCards: function (cards) {
+    showCards: function (cards, boardId) {
         // shows the cards of a board
         // it adds necessary event listeners also
+        const parentBoard = document.getElementById(boardId);
+        let statusIds = [];
+        for (let element of parentBoard.children) {
+            statusIds.push(element.id);
+        }
+
+        for (let card of cards) {
+            if (statusIds.indexOf(card.status_id)) {
+                let parentStatusId = statusIds.indexOf(card.status_id)
+
+            }}
+
+
     },
-    // here comes more features
     clearStatusContainer: function (boardId) {
         const statusContainer = document.getElementById(boardId);
         statusContainer.innerHTML = '';
@@ -65,20 +81,22 @@ export let dom = {
         dataHandler.getStatuses(function (statuses) {
             dom.clearStatusContainer(boardId);
             dom.showStatuses(statuses, boardId);
+            dom.loadCards(boardId)
             });
     },
     showStatuses: function (statuses, boardId) {
         let statusList = '';
         for (let status of statuses) {
             statusList += `
-                <div class="board-column">
-                    <div id="${status.id} class="board-column-title">${status.title}</div>
-                    <div class="board-column-content">
+                <div id="status_${status.title}" class="board-column">
+                    <div class="board-column-title">${status.title}</div>
+                    <div id="status_${status.id}" class="board-column-content">
                     </div>
                 </div>     
             `;
         const statusContainer = document.getElementById(boardId);
-        statusContainer.innerHTML = statusList;
+            console.log(statusContainer);
+            statusContainer.innerHTML = statusList;
         }},
     toggleBoard: function () {
         const button = event.currentTarget,
