@@ -52,7 +52,7 @@ export let dom = {
             })
         }
         dom.addBoard();
-        let cardAddButtons = document.querySelectorAll('.card-add');
+        let cardAddButtons = document.querySelectorAll('.card-add'); // REFACTOR
         for (let button of cardAddButtons){
             button.addEventListener('click', dom.addCard)
         }
