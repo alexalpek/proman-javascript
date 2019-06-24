@@ -68,28 +68,18 @@ export let dom = {
     showCards: function (cards, boardId) {
         // shows the cards of a board
         // it adds necessary event listeners also
-        const parentBoard = document.getElementById(boardId);
-        let statusIds = [];
-        for (let element of parentBoard.children) {
-            statusIds.push(element.id);
-        }
+        const parentBoard = document.getElementById(boardId),
+            statuses = parentBoard.children;
         for (const card of cards) {
-            const status = `${boardId}-status-`.concat(card.status_id),
-                statusIndex = statusIds.indexOf(status);
-            if (statusIndex === 0 || statusIndex !== 0 && statusIndex > -1) {
-
-                const parentStatusId = `${boardId}-status-`.concat(statusIndex),
-                    cardContainer = document.getElementById(parentStatusId);
-                cardContainer.innerHTML += `
-                <div class="card">
-                  <div  class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
-                  <div class="card-title">${card.title}</div>
-                  <div id="${parentStatusId}-${card.id}" class="card-content"</div>
-                </div>`
-            }
-        }
-
-
+            for (let status of statuses) {
+                if (parseInt(status.id) === card.status_id)
+                    status.lastElementChild.innerHTML += `
+                        <div class="card">
+                          <div  class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
+                          <div class="card-title">${card.title}</div>
+                          <div id="${card.id}" class="card-content"</div>
+                        </div>`
+            }}
     },
     clearStatusContainer: function (boardId) {
         const statusContainer = document.getElementById(boardId);
@@ -107,9 +97,9 @@ export let dom = {
         let statusList = '';
         for (let status of statuses) {
             statusList += `
-                <div id="${boardId}-status-${status.title}" class="board-column">
+                <div id="${status.id}" class="board-column">
                     <div class="board-column-title">${status.title}</div>
-                    <div id="${boardId}-status-${status.id}" class="board-column-content">
+                    <div id="${status.id}" class="board-column-content">
                     </div>
                 </div>     
             `;
@@ -131,7 +121,6 @@ export let dom = {
         }
 
     },
-
     addBoard: function () {
         const addButton = document.querySelector('#add-board');
         addButton.addEventListener('click', function () {
