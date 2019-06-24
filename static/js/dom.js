@@ -28,7 +28,7 @@ export let dom = {
                     <button class="board-add card-add">Add Card</button>
                     <button data-toggle="" class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
                 </div>
-                <div id="board-${board.id}" class="board-columns">
+                <div id="${board.id}" class="board-columns">
                 </div>
                 </section>
             `;
@@ -131,7 +131,7 @@ export let dom = {
                     <button class="board-add card-add">Add Card</button>
                     <button class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
                 </div>
-                <div id="board-${boardNumber}" class="board-columns">
+                <div id="${boardNumber}" class="board-columns">
                 </div>`;
             let addCardButton = newSection.querySelector('.card-add');
             addCardButton.addEventListener('click', dom.addCard);
@@ -145,13 +145,12 @@ export let dom = {
         const thisBoard = this.closest('.board');
         const boardColumn = thisBoard.querySelector('.board-columns');
         const newColumn = boardColumn.querySelector('.board-column');
-        let id = newColumn.getAttribute('id');
         let numberOfCards = newColumn.querySelectorAll('.card').length + 1;
         newColumn.querySelector('.board-column-content').innerHTML += `
                 <div class="card">
                   <div  class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
                   <div class="card-title">New Card ${numberOfCards}</div>
-                  <div id="${id}-status-0-${numberOfCards - 1}" class="card-content"</div>
+                  <div id="${numberOfCards}" class="card-content"</div>
                 </div>`
 
 
