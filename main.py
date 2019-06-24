@@ -35,11 +35,7 @@ def get_boards():
 @app.route("/board/<int:board_id>", methods=['POST'])
 @json_response
 def edit_board(board_id: int):
-    """
-    All the boards
-    """
-    title = request.form.get("title")
-    print(title)
+    title = request.json["title"]
     return data_handler.get_board(board_id)
 
 

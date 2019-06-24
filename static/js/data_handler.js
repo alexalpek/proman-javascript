@@ -23,6 +23,9 @@ export let dataHandler = {
         fetch(url, {
             method: 'POST',
             credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(data)
         })
         .then(response => response.json())
@@ -52,9 +55,9 @@ export let dataHandler = {
         });
     },
     renameBoard: function (boardId, boardTitle) {
-        this._api_post('/board/<int:board_id>', (response) => {
+        this._api_post('/board/' + boardId, {'title': boardTitle}, (response) => {
             this._data = response;
-        }, console.log)
+        })
     },
     getStatuses: function (callback) {
         // the statuses are retrieved and then the callback function is called with the statuses
