@@ -110,13 +110,11 @@ export let dom = {
         input.setAttribute('data-original-value', originalValue);
         input.setAttribute('data-board-id', boardId);
         form.appendChild(input);
-
-        const submit = document.createElement('input');
-        submit.setAttribute('class', 'save-btn');
-        submit.setAttribute('type', 'submit');
-        submit.setAttribute('value', 'Save');
-        form.appendChild(submit);
-
+        input.addEventListener('keydown', function(event) {
+            if (event.isComposing || event.key === 13) {
+                form.submit();
+            }
+        });
         form.addEventListener('submit', dom.postData);
 
         return form;
