@@ -55,7 +55,7 @@ export let dataHandler = {
         });
     },
     renameBoard: function (boardId, boardTitle) {
-        this._api_post('/board/' + boardId, {'title': boardTitle}, (response) => {
+        this._api_post('/board/' + boardId, {'title': boardTitle, 'id': boardId}, (response) => {
             this._data = response;
         })
     },

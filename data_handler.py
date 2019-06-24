@@ -29,6 +29,16 @@ def get_boards():
     return persistence.get_boards(force=True)
 
 
+def rename_board(board_id, board_title):
+    """
+    Renames board
+    :param board_id: Board's id
+    :param board_title: Board's new title
+    :return:
+    """
+
+
+
 def get_cards_for_board(board_id):
     persistence.clear_cache()
     all_cards = persistence.get_cards()

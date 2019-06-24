@@ -98,7 +98,7 @@ export let dom = {
     replaceTag: function (parentElement, tagToChange, tagToPutIn) {
         parentElement.replaceChild(tagToPutIn, tagToChange);
     },
-    createForm: function () {
+    createForm: function (boardId, originalValue) {
         const form = document.createElement('form');
         form.setAttribute('id', 'postData');
         form.setAttribute('method', 'post');
@@ -107,13 +107,14 @@ export let dom = {
         input.setAttribute('class', 'board-title');
         input.setAttribute('id', 'title-input');
         input.setAttribute('name', 'title-input');
+        input.setAttribute('data-original-value', originalValue);
+        input.setAttribute('data-board-id', boardId);
         form.appendChild(input);
 
         const submit = document.createElement('input');
         submit.setAttribute('class', 'save-btn');
         submit.setAttribute('type', 'submit');
         submit.setAttribute('value', 'Save');
-        //dom.makeButtonSave(submit);
         form.appendChild(submit);
 
         form.addEventListener('submit', dom.postData);
@@ -125,27 +126,23 @@ export let dom = {
         for (let boardTitle of boardTitles) {
 
             let parentElement = boardTitle.parentElement;
+            let boardId = 0;
+            while (boardTitle.previousElementSibling != null) {
+                boardId++
+            }
             boardTitle.addEventListener('click', function() {
                 if (dom.checkIfQueryExists('#title-input') === null) {
-                    dom.replaceTag(parentElement, boardTitle, dom.createForm());
+                    dom.replaceTag(parentElement, boardTitle, dom.createForm(boardId, boardTitle.textContent));
                 }
             });
         }
     },
-    /*makeButtonSave: function (button) {
-        button.addEventListener('click', function() {
-            const titleInputBox = document.querySelector('#title-input');
-            const newTitle = titleInputBox.value;
-            const id = titleInputBox.parentElement.parentElement.nextElementSibling.id;
-            dataHandler.renameBoard(id, newTitle);
-        });
-    },*/
     postData: function (event) {
         event.preventDefault();
 
         const title = document.querySelector('#title-input');
 
-        dataHandler.renameBoard(3, title);
+        dataHandler.renameBoard(title.dataset.boardId, title.value);
     },
     checkIfQueryExists: function (query) {
         return document.querySelector(query);
