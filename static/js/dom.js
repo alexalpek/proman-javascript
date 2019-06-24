@@ -1,17 +1,17 @@
 // It uses data_handler.js to visualize elements
-import { dataHandler } from "./data_handler.js";
+import {dataHandler} from "./data_handler.js";
 
 export let dom = {
     init: function () {
         // This function should run once, when the page is loaded.
     },
-    clearBoardContainer : function(){
+    clearBoardContainer: function () {
         const boardContainer = document.querySelector('#boards');
         boardContainer.innerHTML = '';
     },
     loadBoards: function () {
         // retrieves boards and makes showBoards called
-        dataHandler.getBoards(function(boards){
+        dataHandler.getBoards(function (boards) {
             dom.clearBoardContainer();
             dom.showBoards(boards);
         });
@@ -21,12 +21,12 @@ export let dom = {
         // it adds necessary event listeners also
 
         let boardList = '';
-        for(let board of boards){
+        for (let board of boards) {
             boardList += `
                 <section class="board">
                 <div class="board-header"><span class="board-title">${board.title}</span>
-                    <button class="board-add">Add Card</button>
-                    <button class="board-toggle"><i class="fas fa-chevron-down">WAKE ME UP</i></button>
+                    <button class="board-add card-add">Add Card</button>
+                    <button data-toggle="" class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
                 </div>
                 <div id="${board.id}" class="board-columns">
                 </div>
@@ -36,6 +36,8 @@ export let dom = {
 
         const outerHtml = `
             <div class="board-container">
+                        <div><button id="add-board" class="board-add">Add Board</button></div>
+
                 ${boardList}
             </div>
         `;
@@ -43,21 +45,52 @@ export let dom = {
         const boardContainer = document.querySelector("#boards");
         boardContainer.insertAdjacentHTML('beforeend', outerHtml);
 
-        dom.changeTitleToInputAndButton();
+
+        const boardTitles = document.querySelectorAll('.board-title');
+        for (let boardTitle of boardTitles) {
+            let parentElement = boardTitle.parentElement;
+            let boardId = parentElement.nextElementSibling.getAttribute('id');
+            dom.changeElementIntoFormWhenClicked(boardTitle, parentElement, boardId);
+        }
+
+        /*dom.changeTitleToInputAndButton();*/
 
         const toggleButtons = document.querySelectorAll('.board-toggle');
         for (let button of toggleButtons) {
-            button.addEventListener('click', dom.toggleBoard)
+            button.addEventListener('click', function (event) {
+                dom.toggleBoard(event);
+            })
         }
+        dom.addBoard();
+        let cardAddButtons = document.querySelectorAll('.card-add'); // REFACTOR
+        for (let button of cardAddButtons){
+            button.addEventListener('click', dom.addCard)
+        }
+
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
+
+        dataHandler.getCardsByBoardId(boardId, function (cards) {
+            dom.showCards(cards, boardId)
+        })
     },
-    showCards: function (cards) {
+    showCards: function (cards, boardId) {
         // shows the cards of a board
         // it adds necessary event listeners also
+        const parentBoard = document.getElementById(boardId),
+            statuses = parentBoard.children;
+        for (const card of cards) {
+            for (let status of statuses) {
+                if (parseInt(status.id) === card.status_id)
+                    status.lastElementChild.innerHTML += `
+                        <div class="card">
+                          <div  class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
+                          <div class="card-title">${card.title}</div>
+                          <div id="${card.id}" class="card-content"</div>
+                        </div>`
+            }}
     },
-    // here comes more features
     clearStatusContainer: function (boardId) {
         const statusContainer = document.getElementById(boardId);
         statusContainer.innerHTML = '';
@@ -67,33 +100,75 @@ export let dom = {
         dataHandler.getStatuses(function (statuses) {
             dom.clearStatusContainer(boardId);
             dom.showStatuses(statuses, boardId);
-            });
+            dom.loadCards(boardId)
+        });
     },
     showStatuses: function (statuses, boardId) {
         let statusList = '';
         for (let status of statuses) {
             statusList += `
-                <div class="board-column">
-                    <div id="${status.id} class="board-column-title">${status.title}</div>
-                    <div class="board-column-content">
+                <div id="${status.id}" class="board-column">
+                    <div class="board-column-title">${status.title}</div>
+                    <div id="${status.id}" class="board-column-content">
                     </div>
                 </div>     
             `;
-        const statusContainer = document.getElementById(boardId);
-        statusContainer.innerHTML = statusList;
-        }},
-    toggleBoard: function () {
-        const button = event.currentTarget,
-              boardId = button.closest(".board").lastElementChild.id;
-        if (button.innerHTML === "AWOKEN") {
-            button.innerHTML = "WAKE ME UP";
-            dom.clearStatusContainer(boardId)
+            const statusContainer = document.getElementById(boardId);
+            statusContainer.innerHTML = statusList;
         }
-        else {
-            button.innerHTML = "AWOKEN";
+    },
+    toggleBoard: function (event) {
+        const button = event.currentTarget,
+            boardId = button.closest(".board").lastElementChild.id;
+        if (button.dataset.toggle === "visible") {
+            button.dataset.toggle = "not-visible";
+            button.innerHTML = `<img class="icon" src="/static/images/close.png" alt="close" >`;
+            dom.clearStatusContainer(boardId)
+        } else {
+            button.dataset.toggle = "visible";
+            button.innerHTML = `<img class="icon" src="/static/images/view.png" alt="view" >`;
             dom.loadStatuses(boardId);
         }
 
+    },
+    addBoard: function () {
+        const addButton = document.querySelector('#add-board');
+        addButton.addEventListener('click', function () {
+            const boardNumber = document.querySelectorAll('.board').length + 1;
+            let newSection = document.createElement('section');
+            newSection.classList.add('board');
+            newSection.innerHTML = `<div class="board-header"><span class="board-title">Board ${boardNumber}</span>
+                    <button class="board-add card-add">Add Card</button>
+                    <button class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
+                </div>
+                <div id="${boardNumber}" class="board-columns">
+                </div>`;
+            let addCardButton = newSection.querySelector('.card-add');
+            addCardButton.addEventListener('click', dom.addCard);
+            document.querySelector('.board-container').appendChild(newSection);
+            let lastToggleButton = document.querySelector('.board:last-child .board-toggle');
+            lastToggleButton.addEventListener('click', dom.toggleBoard);
+
+            const boardTitle = newSection.querySelector('.board-title');
+            const parentElement = boardTitle.parentElement;
+            const boardId = parentElement.nextElementSibling.getAttribute('id');
+
+            dom.changeElementIntoFormWhenClicked(boardTitle, parentElement, boardId);
+            /*dom.changeTitleToInputAndButton();*/
+        });
+    },
+
+    addCard: function () {
+        const thisBoard = this.closest('.board');
+        const boardColumn = thisBoard.querySelector('.board-columns');
+        const newColumn = boardColumn.querySelector('.board-column');
+        let numberOfCards = newColumn.querySelectorAll('.card').length + 1;
+        newColumn.querySelector('.board-column-content').innerHTML += `
+                <div class="card">
+                  <div  class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
+                  <div class="card-title">New Card ${numberOfCards}</div>
+                  <div id="${numberOfCards}" class="card-content"</div>
+                </div>`
     },
     replaceTag: function (parentElement, tagToChange, tagToPutIn) {
         parentElement.replaceChild(tagToPutIn, tagToChange);
@@ -124,10 +199,8 @@ export let dom = {
         for (let boardTitle of boardTitles) {
 
             let parentElement = boardTitle.parentElement;
-            let boardId = 0;
-            while (boardTitle.previousElementSibling != null) {
-                boardId++
-            }
+            let boardId = parentElement.nextElementSibling.getAttribute('id');
+
             boardTitle.addEventListener('click', function() {
                 if (dom.checkIfQueryExists('#title-input') === null) {
                     dom.replaceTag(parentElement, boardTitle, dom.createForm(boardId, boardTitle.textContent));
@@ -141,8 +214,27 @@ export let dom = {
         const title = document.querySelector('#title-input');
 
         dataHandler.renameBoard(title.dataset.boardId, title.value);
+
+        const form = document.querySelector('#postData');
+        const parentElement = form.parentElement;
+        const boardId = parentElement.nextElementSibling.getAttribute('id');
+
+        form.outerHTML = `<span class="board-title">${title.value}</span>`;
+
+        dom.changeElementIntoFormWhenClicked(parentElement.firstElementChild, parentElement, boardId);
+        /*dom.changeTitleToInputAndButton();*/
     },
     checkIfQueryExists: function (query) {
         return document.querySelector(query);
     },
+    changeElementIntoFormWhenClicked: function (element, parentElement, boardId) {
+        /*let parentElement = element.parentElement;
+        let boardId = parentElement.nextElementSibling.getAttribute('id');*/
+
+        element.addEventListener('click', function() {
+        if (dom.checkIfQueryExists('#title-input') === null) {
+            dom.replaceTag(parentElement, element, dom.createForm(boardId, element.textContent));
+        }
+    });
+    }
 };

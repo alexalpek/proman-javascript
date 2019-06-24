@@ -55,7 +55,7 @@ export let dataHandler = {
         });
     },
     renameBoard: function (boardId, boardTitle) {
-        this._api_post('/board/' + boardId, {'title': boardTitle}, (response) => {
+        this._api_post('/rename-board/' + boardId, {'title': boardTitle}, (response) => {
             this._data = response;
         })
     },
@@ -71,7 +71,7 @@ export let dataHandler = {
     },
     getCardsByBoardId: function (boardId, callback) {
         // the cards are retrieved and then the callback function is called with the cards
-        this._api_get('/get-cards/<int:board_id>', (response) => {
+        this._api_get(`/get-cards/${boardId.slice(-1,)}`, (response) => {
             this._data = response;
             callback(response)
         })

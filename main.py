@@ -32,13 +32,6 @@ def get_boards():
     return data_handler.get_boards()
 
 
-@app.route("/board/<int:board_id>", methods=['POST'])
-@json_response
-def edit_board(board_id: int):
-    title = request.json["title"]
-    return data_handler.get_board(board_id)
-
-
 @app.route("/get-cards/<int:board_id>")
 @json_response
 def get_cards_for_board(board_id: int):
@@ -58,7 +51,7 @@ def get_statuses():
     return data_handler.get_statuses()
 
 
-@app.route("/rename-board/<int:board_id>")
+@app.route("/rename-board/<int:board_id>", methods=['POST'])
 @json_response
 def rename_board(board_id: int):
     """
