@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.boars;
+DROP TABLE IF EXISTS public.boards;
 DROP SEQUENCE IF EXISTS public.boards_id_seq;
 CREATE TABLE boards (
     id serial PRIMARY KEY,
