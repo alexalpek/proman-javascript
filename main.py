@@ -64,7 +64,6 @@ def rename_board(board_id: int):
     """
     Rename board
     """
-    board_id = request.json['id']
     board_title = request.json['title']
     return data_handler.rename_board(board_id, board_title)
 
