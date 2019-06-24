@@ -53,8 +53,6 @@ export let dom = {
             dom.changeElementIntoFormWhenClicked(boardTitle, parentElement, boardId);
         }
 
-        /*dom.changeTitleToInputAndButton();*/
-
         const toggleButtons = document.querySelectorAll('.board-toggle');
         for (let button of toggleButtons) {
             button.addEventListener('click', function (event) {
@@ -154,7 +152,6 @@ export let dom = {
             const boardId = parentElement.nextElementSibling.getAttribute('id');
 
             dom.changeElementIntoFormWhenClicked(boardTitle, parentElement, boardId);
-            /*dom.changeTitleToInputAndButton();*/
         });
     },
 
@@ -194,20 +191,6 @@ export let dom = {
 
         return form;
     },
-    changeTitleToInputAndButton: function () {
-        const boardTitles = document.querySelectorAll('.board-title');
-        for (let boardTitle of boardTitles) {
-
-            let parentElement = boardTitle.parentElement;
-            let boardId = parentElement.nextElementSibling.getAttribute('id');
-
-            boardTitle.addEventListener('click', function() {
-                if (dom.checkIfQueryExists('#title-input') === null) {
-                    dom.replaceTag(parentElement, boardTitle, dom.createForm(boardId, boardTitle.textContent));
-                }
-            });
-        }
-    },
     postData: function (event) {
         event.preventDefault();
 
@@ -222,14 +205,11 @@ export let dom = {
         form.outerHTML = `<span class="board-title">${title.value}</span>`;
 
         dom.changeElementIntoFormWhenClicked(parentElement.firstElementChild, parentElement, boardId);
-        /*dom.changeTitleToInputAndButton();*/
     },
     checkIfQueryExists: function (query) {
         return document.querySelector(query);
     },
     changeElementIntoFormWhenClicked: function (element, parentElement, boardId) {
-        /*let parentElement = element.parentElement;
-        let boardId = parentElement.nextElementSibling.getAttribute('id');*/
 
         element.addEventListener('click', function() {
         if (dom.checkIfQueryExists('#title-input') === null) {
