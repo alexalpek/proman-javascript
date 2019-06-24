@@ -1,4 +1,8 @@
-DROP TABLE IF EXISTS public.boars;
+ALTER TABLE IF EXISTS ONLY public.cards DROP CONSTRAINT IF EXISTS fk_card_board_id CASCADE;
+ALTER TABLE IF EXISTS ONLY public.cards DROP CONSTRAINT IF EXISTS fk_card_status_id CASCADE;
+
+
+DROP TABLE IF EXISTS public.boards;
 DROP SEQUENCE IF EXISTS public.boards_id_seq;
 CREATE TABLE boards (
     id serial PRIMARY KEY,
@@ -21,9 +25,10 @@ CREATE TABLE statuses (
     title text
 );
 
+
 ALTER TABLE ONLY cards
-    ADD CONSTRAINT fk_card_status_id FOREIGN KEY (status_id) REFERENCES statuses(id),
-    ADD CONSTRAINT fk_card_board_id FOREIGN KEY (board_id) REFERENCES boards(id);
+    ADD CONSTRAINT fk_card_status_id FOREIGN KEY (status_id) REFERENCES statuses(id) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_card_board_id FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE;
 
 INSERT INTO boards VALUES (1, 'Board 1');
 INSERT INTO boards VALUES (2, 'Board 2');

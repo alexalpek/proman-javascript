@@ -61,11 +61,11 @@ section.board{
     display: inline-block;
     font-size: 20px;
 }
-.board-title, .board-add, .board-toggle{
+.board-title, .board-add, .board-toggle, .board-delete{
     display: inline-block;
 }
 
-.board-toggle{
+.board-toggle, .board-delete{
     float: right;
     margin: 13px;
 }
