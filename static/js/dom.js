@@ -25,7 +25,7 @@ export let dom = {
             boardList += `
                 <section class="board">
                 <div class="board-header"><span class="board-title">${board.title}</span>
-                    <button class="board-add">Add Card</button>
+                    <button class="board-add card-add">Add Card</button>
                     <button data-toggle="" class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
                 </div>
                 <div id="board-${board.id}" class="board-columns">
@@ -48,10 +48,14 @@ export let dom = {
         const toggleButtons = document.querySelectorAll('.board-toggle');
         for (let button of toggleButtons) {
             button.addEventListener('click', function (event) {
-                dom.toggleBoard(event)
+                dom.toggleBoard(event);
             })
         }
         dom.addBoard();
+        let cardAddButtons = document.querySelectorAll('.card-add');
+        for (let button of cardAddButtons){
+            button.addEventListener('click', dom.addCard)
+        }
 
     },
     loadCards: function (boardId) {
@@ -122,7 +126,7 @@ export let dom = {
             dom.clearStatusContainer(boardId)
         } else {
             button.dataset.toggle = "visible";
-            button.innerHTML= `<img class="icon" src="/static/images/view.png" alt="view" >`;
+            button.innerHTML = `<img class="icon" src="/static/images/view.png" alt="view" >`;
             dom.loadStatuses(boardId);
         }
 
@@ -135,14 +139,32 @@ export let dom = {
             let newSection = document.createElement('section');
             newSection.classList.add('board');
             newSection.innerHTML = `<div class="board-header"><span class="board-title">Board ${boardNumber}</span>
-                    <button class="board-add">Add Card</button>
+                    <button class="board-add card-add">Add Card</button>
                     <button class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
                 </div>
                 <div id="board-${boardNumber}" class="board-columns">
                 </div>`;
+            let addCardButton = newSection.querySelector('.card-add');
+            addCardButton.addEventListener('click', dom.addCard);
             document.querySelector('.board-container').appendChild(newSection);
             let lastToggleButton = document.querySelector('.board:last-child .board-toggle');
             lastToggleButton.addEventListener('click', dom.toggleBoard);
         });
+    },
+
+    addCard: function () {
+        const thisBoard = this.closest('.board');
+        const boardColumn = thisBoard.querySelector('.board-columns');
+        const newColumn = boardColumn.querySelector('.board-column');
+        let id = newColumn.getAttribute('id');
+        let numberOfCards = newColumn.querySelectorAll('.card').length + 1;
+        newColumn.querySelector('.board-column-content').innerHTML += `
+                <div class="card">
+                  <div  class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
+                  <div class="card-title">New Card ${numberOfCards}</div>
+                  <div id="${id}-status-0-${numberOfCards - 1}" class="card-content"</div>
+                </div>`
+
+
     },
 };
