@@ -46,6 +46,14 @@ export let dom = {
         const boardContainer = document.querySelector("#boards");
         boardContainer.insertAdjacentHTML('beforeend', outerHtml);
 
+
+        const boardTitles = document.querySelectorAll('.board-title');
+        for (let boardTitle of boardTitles) {
+            let parentElement = boardTitle.parentElement;
+            let boardId = parentElement.nextElementSibling.getAttribute('id');
+            dom.changeElementIntoFormWhenClicked(boardTitle, parentElement, boardId);
+        }
+
         const toggleButtons = document.querySelectorAll('.board-toggle');
         for (let button of toggleButtons) {
             button.addEventListener('click', function (event) {
@@ -160,6 +168,12 @@ export let dom = {
             dataHandler.createNewBoard({"id": `${boardNumber}`, "title": `Board ${boardNumber}`, "to": "boards"});
             let lastToggleButton = document.querySelector('.board:last-child .board-toggle');
             lastToggleButton.addEventListener('click', dom.toggleBoard);
+
+            const boardTitle = newSection.querySelector('.board-title');
+            const parentElement = boardTitle.parentElement;
+            const boardId = parentElement.nextElementSibling.getAttribute('id');
+
+            dom.changeElementIntoFormWhenClicked(boardTitle, parentElement, boardId);
             let deleteButton = newSection.querySelector(".board-delete");
             deleteButton.addEventListener('click', dom.deleteBoard)
         });
@@ -202,6 +216,69 @@ export let dom = {
                 })
             }
         });
+        },
+        replaceTag: function (tagToChange, tagToPutIn) {
+        tagToChange.parentElement.replaceChild(tagToPutIn, tagToChange);
+        },
+        createForm: function (boardId, originalValue) {
+        const form = document.createElement('form');
+        form.setAttribute('id', 'postData');
+        form.setAttribute('method', 'post');
 
+        const input = document.createElement('input');
+        input.setAttribute('class', 'board-title');
+        input.setAttribute('id', 'title-input');
+        input.setAttribute('name', 'title-input');
+        input.setAttribute('data-original-value', originalValue);
+        input.setAttribute('data-board-id', boardId);
+        form.appendChild(input);
+
+
+        input.addEventListener('keydown', function(event) {
+            if (event.isComposing || event.key === 13) {
+                form.submit();
+            }
+        });
+
+        form.addEventListener('submit', dom.postData);
+
+        return form;
+    },
+    postData: function (event) {
+        event.preventDefault();
+
+        const title = document.querySelector('#title-input');
+
+        dataHandler.renameBoard(title.dataset.boardId, title.value);
+
+        const form = document.querySelector('#postData');
+        const parentElement = form.parentElement;
+        const boardId = parentElement.nextElementSibling.getAttribute('id');
+
+        parentElement.insertAdjacentHTML('afterbegin', `<span class="board-title">${title.value}</span>`);
+        form.remove();
+
+        dom.changeElementIntoFormWhenClicked(parentElement.firstElementChild, parentElement, boardId);
+    },
+    checkIfQueryExists: function (query) {
+        return document.querySelector(query);
+    },
+    changeElementIntoFormWhenClicked: function (element, parentElement, boardId) {
+        const currentName = element.textContent;
+
+        element.addEventListener('click', function() {
+        if (dom.checkIfQueryExists('#title-input') === null) {
+            dom.replaceTag(element, dom.createForm(boardId, element.textContent));
+
+            const createdElement = document.querySelector('#title-input');
+            createdElement.focus();
+            createdElement.addEventListener('blur', function () {
+                createdElement.parentElement.insertAdjacentHTML('afterbegin', `<span class="board-title">${currentName}</span>`);
+                createdElement.remove();
+
+                dom.changeElementIntoFormWhenClicked(parentElement.firstElementChild, parentElement, boardId);
+            })
+        }
+    });
     },
 };

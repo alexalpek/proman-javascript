@@ -14,6 +14,15 @@ def index():
     return render_template('index.html')
 
 
+@app.route("/get-board/<int:board_id>")
+@json_response
+def get_board(board_id: int):
+    """
+    Get board by id
+    """
+    return data_handler.get_board(board_id)
+
+
 @app.route("/get-boards")
 @json_response
 def get_boards():
@@ -42,6 +51,16 @@ def get_statuses():
     return data_handler.get_statuses()
 
 
+@app.route("/rename-board/<int:board_id>", methods=['POST'])
+@json_response
+def rename_board(board_id: int):
+    """
+    Rename board
+    """
+    board_title = request.json['title']
+    return data_handler.rename_board(board_id, board_title)
+
+
 @app.route("/post-data", methods=['POST', 'PUT', 'DELETE'])
 @json_response
 def post_data():
@@ -54,7 +73,8 @@ def post_data():
         elif data['to'] == "cards":
             data_handler.add_card(data)
     elif request.method == "PUT":
-        pass
+        if data['to'] == "boards":
+            data_handler.rename_board(data)
     elif request.method == "DELETE":
         if data['to'] == "boards":
             data_handler.delete_board(data)

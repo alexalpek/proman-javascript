@@ -42,6 +42,17 @@ export let dataHandler = {
     },
     getBoard: function (boardId, callback) {
         // the board is retrieved and then the callback function is called with the board
+        this._api_get('/get-boards', (response) => {
+            this._data = response;
+            for (let board of response) {
+                if (board.id === boardId) {
+                    callback(board);
+                }
+            }
+        });
+    },
+    renameBoard: function (boardId, boardTitle) {
+        this._api_send('/post-data','PUT', {"id": boardId.replace(/\D/g,''), "title": boardTitle, "to": "boards"})
     },
     getStatuses: function (callback) {
         // the statuses are retrieved and then the callback function is called with the statuses
@@ -55,7 +66,7 @@ export let dataHandler = {
     },
     getCardsByBoardId: function (boardId, callback) {
         // the cards are retrieved and then the callback function is called with the cards
-        this._api_get(`/get-cards/${boardId.slice(-1,)}`, (response) => {
+        this._api_get(`/get-cards/${boardId.replace(/\D/g,'')}`, (response) => {
             this._data = response;
             callback(response)
         })
