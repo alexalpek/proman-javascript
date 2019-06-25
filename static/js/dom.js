@@ -143,6 +143,8 @@ export let dom = {
             button.dataset.toggle = "visible";
             button.innerHTML = `<img class="icon" src="/static/images/view.png" alt="view" >`;
             dom.loadStatuses(boardId);
+            let cardAddButton = button.closest("section").querySelector(".card-add");
+            cardAddButton.addEventListener('click', dom.addCard)
         }
 
     },
