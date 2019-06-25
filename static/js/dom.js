@@ -53,10 +53,6 @@ export let dom = {
             })
         }
         dom.addBoard();
-        let cardAddButtons = document.querySelectorAll('.card-add'); // REFACTOR
-        for (let button of cardAddButtons) {
-            button.addEventListener('click', dom.addCard)
-        }
         let deleteButtons = document.querySelectorAll(".board-delete");
         for (let button of deleteButtons) {
             button.addEventListener('click', dom.deleteBoard)
@@ -87,7 +83,11 @@ export let dom = {
             }
         }
         let deleteButtons = parentBoard.querySelectorAll(".card-remove button");
-        for (let button of deleteButtons) {button.addEventListener('click', function () {dom.deleteCard()})}
+        for (let button of deleteButtons) {
+            button.addEventListener('click', function () {
+                dom.deleteCard()
+            })
+        }
 
     },
     clearStatusContainer: function (boardId) {
@@ -129,10 +129,14 @@ export let dom = {
             button.dataset.toggle = "not-visible";
             button.innerHTML = `<img class="icon" src="/static/images/close.png" alt="close" >`;
             dom.clearStatusContainer(boardId)
+            let cardAddButton = button.closest("section").querySelector(".card-add");
+            cardAddButton.removeEventListener('click', dom.addCard)
         } else {
             button.dataset.toggle = "visible";
             button.innerHTML = `<img class="icon" src="/static/images/view.png" alt="view" >`;
             dom.loadStatuses(boardId);
+            let cardAddButton = button.closest("section").querySelector(".card-add");
+            cardAddButton.addEventListener('click', dom.addCard)
         }
 
     },
@@ -161,12 +165,12 @@ export let dom = {
         });
     },
     deleteCard: function (cardId) {
-      let deleteButton = event.currentTarget,
-          card = deleteButton.closest("div").parentElement,
-          cardContent = card.querySelector(".card-content");
-      cardId === null ? cardId = null : cardId = cardContent.id;
-      dataHandler.deleteCard({"id": `${cardId}`, "to": "cards"});
-      card.remove()
+        let deleteButton = event.currentTarget,
+            card = deleteButton.closest("div").parentElement,
+            cardContent = card.querySelector(".card-content");
+        cardId === null ? cardId = null : cardId = cardContent.id;
+        dataHandler.deleteCard({"id": `${cardId}`, "to": "cards"});
+        card.remove()
     },
     addCard: function () {
         const thisBoard = this.closest('.board');
@@ -183,17 +187,20 @@ export let dom = {
         });
         dataHandler._api_get('/get-card-id', function (response) {
             let cardId = parseInt(response) + 1;
-            console.log(cardId);
-            newColumn.querySelector('.board-column-content').innerHTML += `
-                <div class="card">
+            let card = document.createElement("div");
+            card.classList.add("card");
+            card.innerHTML = `
                   <div class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
                   <div class="card-title">New Card ${numberOfCards}</div>
-                  <div id="${cardId}" class="card-content"</div>
-                </div>`;
+                  <div id="${cardId}" class="card-content"</div>`;
 
-        let removeButtons = thisBoard.querySelectorAll(".card-remove button");
-        let deleteButton = removeButtons[removeButtons.length - 1];
-        deleteButton.addEventListener('click', function (cardId) {dom.deleteCard(cardId)})
+            newColumn.querySelector('.board-column-content').appendChild(card);
+            let removeButtons = thisBoard.querySelectorAll(".card-remove button");
+            for (let button of removeButtons) {
+                button.addEventListener('click', function (cardId) {
+                    dom.deleteCard(cardId)
+                })
+            }
         });
 
     },
