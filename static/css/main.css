@@ -138,3 +138,7 @@ section.board{
     height: 18px;
     position:relative;
 }
+
+form {
+    display: inline-block;
+}
