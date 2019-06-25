@@ -4,15 +4,11 @@ import connection
 @connection.connection_handler
 def get_latest_card_id(cursor):
     cursor.execute("""
-        SELECT id FROM cards
-        ORDER BY id DESC
-        LIMIT 1    
+        SELECT cards_id_seq.last_value FROM cards_id_seq    
     """)
-    card_id = cursor.fetchall()
-    if card_id is []:
-        return 0
-    id_ = card_id[0]
-    return int(id_)
+    card_id = cursor.fetchone()
+    for i, k in card_id.items():
+        return k
 
 
 @connection.connection_handler
@@ -76,11 +72,11 @@ def add_card(cursor, data):
                 %(status_id)s, 
                 %(card_order)s)
     """, {
-          "board_id": data['board_id'],
-          "title": data['title'],
-          "status_id": data['status_id'],
-          "card_order": data['card_order']
-          })
+        "board_id": data['board_id'],
+        "title": data['title'],
+        "status_id": data['status_id'],
+        "card_order": data['card_order']
+    })
 
 
 @connection.connection_handler
@@ -120,4 +116,3 @@ def delete_card(cursor, data):
         DELETE FROM cards
         WHERE id = %(id_)s
     """, {"id_": data['id']})
-
