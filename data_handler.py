@@ -1,11 +1,18 @@
 import connection
 
+
 @connection.connection_handler
 def get_latest_card_id(cursor):
     cursor.execute("""
-        SELECT count(*) FROM cards
+        SELECT id FROM cards
+        ORDER BY id DESC
+        LIMIT 1    
     """)
-    return cursor.fetchone()['count']
+    card_id = cursor.fetchall()
+    if card_id is []:
+        return 0
+    id_ = card_id[0]
+    return int(id_)
 
 
 @connection.connection_handler
@@ -62,17 +69,13 @@ def add_status(cursor, data):
 @connection.connection_handler
 def add_card(cursor, data):
     cursor.execute("""
-        SELECT count(*) FROM cards
-    """)
-    id_ = int(get_latest_card_id()) + 1
-    cursor.execute("""
-        INSERT INTO cards
-        VALUES (%(id)s, 
+        INSERT INTO cards (board_id, title, status_id, card_order)
+        VALUES ( 
                 %(board_id)s, 
                 %(title)s, 
                 %(status_id)s, 
                 %(card_order)s)
-    """, {"id": id_,
+    """, {
           "board_id": data['board_id'],
           "title": data['title'],
           "status_id": data['status_id'],

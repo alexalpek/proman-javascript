@@ -84,11 +84,11 @@ export let dom = {
                           <div class="card-title">${card.title}</div>
                           <div id="${card.id}" class="card-content"</div>
                         </div>`;
-
-                    let deleteButton = parentBoard.querySelector(".card-remove button");
-                    deleteButton.addEventListener('click', function () {dom.deleteCard(card.id)})
             }
         }
+        let deleteButtons = parentBoard.querySelectorAll(".card-remove button");
+        for (let button of deleteButtons) {button.addEventListener('click', function () {dom.deleteCard()})}
+
     },
     clearStatusContainer: function (boardId) {
         const statusContainer = document.getElementById(boardId);
@@ -162,7 +162,9 @@ export let dom = {
     },
     deleteCard: function (cardId) {
       let deleteButton = event.currentTarget,
-          card = deleteButton.closest("div").parentElement;
+          card = deleteButton.closest("div").parentElement,
+          cardContent = card.querySelector(".card-content");
+      cardId === null ? cardId = null : cardId = cardContent.id;
       dataHandler.deleteCard({"id": `${cardId}`, "to": "cards"});
       card.remove()
     },
@@ -170,15 +172,8 @@ export let dom = {
         const thisBoard = this.closest('.board');
         const boardColumn = thisBoard.querySelector('.board-columns');
         const newColumn = boardColumn.querySelector('.board-column');
-        let cardId = parseInt(dataHandler._api_get('/get-card-id')) + 1;
-        let numberOfCards = newColumn.querySelectorAll('.card').length + 1;
-        newColumn.querySelector('.board-column-content').innerHTML += `
-                <div class="card">
-                  <div class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
-                  <div class="card-title">New Card ${numberOfCards}</div>
-                  <div id="${cardId}" class="card-content"</div>
-                </div>`;
         let boardId = thisBoard.dataset.idNum;
+        let numberOfCards = newColumn.querySelectorAll('.card').length + 1;
         dataHandler.createNewCard({
             "board_id": boardId,
             "title": `New Card ${numberOfCards}`,
@@ -186,8 +181,20 @@ export let dom = {
             "card_order": `${numberOfCards - 1}`,
             "to": "cards"
         });
+        dataHandler._api_get('/get-card-id', function (response) {
+            let cardId = parseInt(response) + 1;
+            console.log(cardId);
+            newColumn.querySelector('.board-column-content').innerHTML += `
+                <div class="card">
+                  <div class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
+                  <div class="card-title">New Card ${numberOfCards}</div>
+                  <div id="${cardId}" class="card-content"</div>
+                </div>`;
+
         let removeButtons = thisBoard.querySelectorAll(".card-remove button");
         let deleteButton = removeButtons[removeButtons.length - 1];
-        deleteButton.addEventListener('click', function () {dom.deleteCard(cardId)})
+        deleteButton.addEventListener('click', function (cardId) {dom.deleteCard(cardId)})
+        });
+
     },
 };

@@ -16,7 +16,7 @@ export let dataHandler = {
         .then(response => response.json())  // parse the response as JSON
         .then(json_response => callback(json_response));  // Call the `callback` with the returned object
     },
-    _api_send: function (url,method, data, callback) {
+    _api_send: function (url,method, data) {
         // it is not called from outside
         // sends the data to the API, and calls callback function
 

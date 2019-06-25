@@ -52,3 +52,4 @@ INSERT INTO cards VALUES (9,2,'in progress card',1,0);
 INSERT INTO cards VALUES (10,2,'planning',2,0);
 INSERT INTO cards VALUES (11,2,'done card 1',3,0);
 INSERT INTO cards VALUES (12,2,'done card 1',3,1);
+SELECT pg_catalog.setval('cards_id_seq', 12, true);
