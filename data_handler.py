@@ -13,7 +13,8 @@ def get_card_status(cursor, status_id):
 @connection.connection_handler
 def get_boards(cursor):
     cursor.execute("""
-        SELECT * FROM boards;
+        SELECT * FROM boards
+        ORDER BY id;
     """)
     return cursor.fetchall()
 
