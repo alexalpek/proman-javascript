@@ -167,8 +167,8 @@ export let dom = {
                   <div id="${numberOfCards}" class="card-content"</div>
                 </div>`
     },
-    replaceTag: function (parentElement, tagToChange, tagToPutIn) {
-        parentElement.replaceChild(tagToPutIn, tagToChange);
+    replaceTag: function (tagToChange, tagToPutIn) {
+        tagToChange.parentElement.replaceChild(tagToPutIn, tagToChange);
     },
     createForm: function (boardId, originalValue) {
         const form = document.createElement('form');
@@ -181,12 +181,16 @@ export let dom = {
         input.setAttribute('name', 'title-input');
         input.setAttribute('data-original-value', originalValue);
         input.setAttribute('data-board-id', boardId);
+
         form.appendChild(input);
+
+
         input.addEventListener('keydown', function(event) {
             if (event.isComposing || event.key === 13) {
                 form.submit();
             }
         });
+
         form.addEventListener('submit', dom.postData);
 
         return form;
@@ -202,7 +206,8 @@ export let dom = {
         const parentElement = form.parentElement;
         const boardId = parentElement.nextElementSibling.getAttribute('id');
 
-        form.outerHTML = `<span class="board-title">${title.value}</span>`;
+        parentElement.insertAdjacentHTML('afterbegin', `<span class="board-title">${title.value}</span>`);
+        form.remove();
 
         dom.changeElementIntoFormWhenClicked(parentElement.firstElementChild, parentElement, boardId);
     },
@@ -210,11 +215,24 @@ export let dom = {
         return document.querySelector(query);
     },
     changeElementIntoFormWhenClicked: function (element, parentElement, boardId) {
+        const currentName = element.textContent;
 
         element.addEventListener('click', function() {
         if (dom.checkIfQueryExists('#title-input') === null) {
-            dom.replaceTag(parentElement, element, dom.createForm(boardId, element.textContent));
+            dom.replaceTag(element, dom.createForm(boardId, element.textContent));
+
+            const createdElement = document.querySelector('#title-input');
+            createdElement.focus();
+            createdElement.addEventListener('blur', function () {
+                createdElement.parentElement.insertAdjacentHTML('afterbegin', `<span class="board-title">${currentName}</span>`);
+                createdElement.remove();
+
+                dom.changeElementIntoFormWhenClicked(parentElement.firstElementChild, parentElement, boardId);
+            })
         }
     });
-    }
+    },
+    /*changeToTitleIfNotTarget: function (element) {
+
+    }*/
 };
