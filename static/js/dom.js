@@ -232,7 +232,4 @@ export let dom = {
         }
     });
     },
-    /*changeToTitleIfNotTarget: function (element) {
-
-    }*/
 };
