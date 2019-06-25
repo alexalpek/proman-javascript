@@ -170,7 +170,7 @@ export let dom = {
     replaceTag: function (tagToChange, tagToPutIn) {
         tagToChange.parentElement.replaceChild(tagToPutIn, tagToChange);
     },
-    createForm: function (boardId, originalValue) {
+    createForm: function (boardId) {
         const form = document.createElement('form');
         form.setAttribute('id', 'postData');
         form.setAttribute('method', 'post');
@@ -178,8 +178,6 @@ export let dom = {
         const input = document.createElement('input');
         input.setAttribute('class', 'board-title');
         input.setAttribute('id', 'title-input');
-        input.setAttribute('name', 'title-input');
-        input.setAttribute('data-original-value', originalValue);
         input.setAttribute('data-board-id', boardId);
 
         form.appendChild(input);
@@ -191,11 +189,11 @@ export let dom = {
             }
         });
 
-        form.addEventListener('submit', dom.postData);
+        form.addEventListener('submit', dom.postDataForBoard);
 
         return form;
     },
-    postData: function (event) {
+    postDataForBoard: function (event) {
         event.preventDefault();
 
         const title = document.querySelector('#title-input');
@@ -219,7 +217,7 @@ export let dom = {
 
         element.addEventListener('click', function() {
         if (dom.checkIfQueryExists('#title-input') === null) {
-            dom.replaceTag(element, dom.createForm(boardId, element.textContent));
+            dom.replaceTag(element, dom.createForm(boardId));
 
             const createdElement = document.querySelector('#title-input');
             createdElement.focus();
