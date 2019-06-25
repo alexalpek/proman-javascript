@@ -165,7 +165,7 @@ export let dom = {
             let addCardButton = newSection.querySelector('.card-add');
             addCardButton.addEventListener('click', dom.addCard);
             document.querySelector('.board-container').appendChild(newSection);
-            dataHandler.createNewBoard({"id": `${boardNumber}`, "title": `Board ${boardNumber}`, "to": "boards"});
+            dataHandler.createNewBoard({"title": `Board ${boardNumber}`, "to": "boards"});
             let lastToggleButton = document.querySelector('.board:last-child .board-toggle');
             lastToggleButton.addEventListener('click', dom.toggleBoard);
 

@@ -60,9 +60,9 @@ def get_statuses(cursor):
 @connection.connection_handler
 def add_board(cursor, data):
     cursor.execute("""
-        INSERT INTO boards
-        VALUES (%(id)s, %(title)s)
-    """, {"id": data['id'], "title": data['title']})
+        INSERT INTO boards (title)
+        VALUES (%(title)s)
+    """, {"title": data['title']})
 
 
 @connection.connection_handler
