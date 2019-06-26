@@ -138,3 +138,17 @@ section.board{
     height: 18px;
     position:relative;
 }
+
+.nav-bar {
+    display: inline-block;
+}
+
+.nav-bar a {
+    text-decoration: none;
+}
+.nav-bar a:link, .nav-bar a:visited {
+    color: rgb(255, 255, 255);
+}
+.nav-bar a:hover {
+    color: red;
+}
