@@ -61,9 +61,6 @@ export let dataHandler = {
             callback(response)
         })
     },
-    getStatus: function (statusId, callback) {
-        // the status is retrieved and then the callback function is called with the status
-    },
     getCardsByBoardId: function (boardId, callback) {
         // the cards are retrieved and then the callback function is called with the cards
         this._api_get(`/get-cards/${boardId.replace(/\D/g,'')}`, (response) => {
@@ -82,6 +79,9 @@ export let dataHandler = {
         // creates new board, saves it and calls the callback function with its data
         this._api_send('/post-data', 'DELETE', boardData)
     },
+    renameCard: function (cardData) {
+        this._api_send('/post-data', 'PUT', cardData)
+    },
     deleteCard: function (cardData) {
         // creates new board, saves it and calls the callback function with its data
         this._api_send('/post-data', 'DELETE', cardData)
@@ -89,8 +89,5 @@ export let dataHandler = {
     createNewCard: function (cardData) {
         // creates new card, saves it and calls the callback function with its data
         this._api_send('/post-data', 'POST', cardData)
-    },
-    createNewStatus: function (cardTitle, boardId, statusId, callback) {
-        // creates new card, saves it and calls the callback function with its data
     }
 };

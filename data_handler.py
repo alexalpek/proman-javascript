@@ -102,16 +102,6 @@ def add_card(cursor, data):
 
 
 @connection.connection_handler
-def edit_board(cursor, data):
-    pass
-
-
-@connection.connection_handler
-def edit_status(cursor, data):
-    pass
-
-
-@connection.connection_handler
 def edit_card(cursor, data):
     if data['operation'] == "drop" and "board_id" in data.keys():
         cursor.execute("""
@@ -126,6 +116,13 @@ def edit_card(cursor, data):
             SET card_order = %(order_id)s
             WHERE id = %(id_)s
         """, {"id_": data['id'], "order_id": data['order_id']})
+    elif data['operation'] == "rename":
+        cursor.execute("""
+            UPDATE cards
+            SET title = %(card_title)s
+            WHERE id = %(card_id)s;
+            
+        """, {"card_id": data['id'], "card_title": data['title']})
 
 
 @connection.connection_handler
