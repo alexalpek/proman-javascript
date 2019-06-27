@@ -1,9 +1,12 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, session, redirect
 from util import json_response
+from util import verify_password, hash_password
 
 import data_handler
 
 app = Flask(__name__)
+
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
 @app.route("/")
@@ -11,7 +14,10 @@ def index():
     """
     This is a one-pager which shows all the boards and cards
     """
-    return render_template('index.html')
+    if 'username' in session:
+        return render_template('index.html')
+    elif 'username' not in session:
+        return redirect(url_for('login'))
 
 
 @app.route("/get-board/<int:board_id>")
@@ -29,7 +35,8 @@ def get_boards():
     """
     All the boards
     """
-    return data_handler.get_boards()
+    session_id = session["id"]
+    return data_handler.get_boards(session_id)
 
 
 @app.route("/get-cards/<int:board_id>")
@@ -67,7 +74,7 @@ def post_data():
     data = request.get_json()
     if request.method == "POST":
         if data['to'] == "boards":
-            data_handler.add_board(data)
+            data_handler.add_board(data, session)
         elif data['to'] == "statuses":
             data_handler.add_status(data)
         elif data['to'] == "cards":
@@ -98,6 +105,43 @@ def get_card_data():
 @json_response
 def get_board_data():
     return data_handler.get_latest_board_id()
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "GET":
+        return render_template("login.html")
+    elif request.method == "POST":
+        username = request.form['username']
+        hashed_password = data_handler.get_password_from_user_name(username)
+        try:
+            result = verify_password(request.form['password'], hashed_password[0]['password'])
+        except IndexError:
+            return render_template("login.html")
+        if result:
+            session['username'] = request.form['username']
+            session['id'] = data_handler.get_id_from_user_name(session['username'])
+            return redirect(url_for('index'))
+        else:
+            return render_template("login.html")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "GET":
+        return render_template('register.html')
+    elif request.method == "POST":
+        username = request.form['username']
+        password = hash_password(request.form['password'])
+        data_handler.registration(username, password)
+        return redirect('/')
+
+
+@app.route("/logout")
+def logout():
+    session.pop('username', None)
+    session.pop('id', None)
+    return redirect(url_for('index'))
 
 
 def main():

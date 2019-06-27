@@ -31,11 +31,12 @@ def get_card_status(cursor, status_id):
 
 
 @connection.connection_handler
-def get_boards(cursor):
+def get_boards(cursor, session_id):
     cursor.execute("""
         SELECT * FROM boards
+        WHERE user_id = %(session_id)s
         ORDER BY id;
-    """)
+    """, {"session_id": session_id})
     return cursor.fetchall()
 
 
@@ -68,11 +69,11 @@ def get_statuses(cursor):
 
 
 @connection.connection_handler
-def add_board(cursor, data):
+def add_board(cursor, data, session):
     cursor.execute("""
-        INSERT INTO boards (title)
-        VALUES (%(title)s)
-    """, {"title": data['title']})
+        INSERT INTO boards (title, user_id)
+        VALUES (%(title)s, %(user_id)s)
+    """, {"title": data['title'], "user_id": session["id"]})
 
 
 @connection.connection_handler
@@ -149,3 +150,31 @@ def delete_card(cursor, data):
         DELETE FROM cards
         WHERE id = %(id_)s
     """, {"id_": data['id']})
+
+
+@connection.connection_handler
+def get_id_from_user_name(cursor, username):
+    cursor.execute("""
+                    SELECT id FROM users
+                    WHERE %(username)s = username
+    """, {"username": username})
+    id_ = cursor.fetchall()
+    return id_[0]['id']
+
+
+@connection.connection_handler
+def get_password_from_user_name(cursor, username):
+    cursor.execute("""
+                    SELECT password FROM users
+                    WHERE %(username)s = username
+    """, {"username": username})
+    password = cursor.fetchall()
+    return password
+
+
+@connection.connection_handler
+def registration(cursor, username, password):
+    cursor.execute("""
+                    INSERT INTO users (username, password) 
+                    VALUES (%(username)s, %(password)s);
+    """, {'username': username, 'password': password})

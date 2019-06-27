@@ -265,8 +265,8 @@ export let dom = {
                 })
             }
         });
-        },
-        replaceTag: function (tagToChange, tagToPutIn) {
+    },
+    replaceTag: function (tagToChange, tagToPutIn) {
         tagToChange.parentElement.replaceChild(tagToPutIn, tagToChange);
     },
     createForm: function (boardId) {
@@ -281,9 +281,13 @@ export let dom = {
         form.appendChild(input);
 
 
+        input.addEventListener('keydown', function (event) {
+            if (event.isComposing || event.key === 13) {
+                form.submit();
+            }
+        });
 
-
-        form.addEventListener('submit', function () {dom.postDataForBoard()});
+        form.addEventListener('submit', dom.postDataForBoard);
 
         return form;
     },
@@ -309,19 +313,19 @@ export let dom = {
     changeElementIntoFormWhenClicked: function (element, parentElement, boardId) {
         const currentName = element.textContent;
 
-        element.addEventListener('click', function() {
-        if (dom.checkIfQueryExists('#title-input') === null) {
-            dom.replaceTag(element, dom.createForm(boardId));
+        element.addEventListener('click', function () {
+            if (dom.checkIfQueryExists('#title-input') === null) {
+                dom.replaceTag(element, dom.createForm(boardId));
 
-            const createdElement = document.querySelector('#title-input');
-            createdElement.focus();
-            createdElement.addEventListener('blur', function () {
-                createdElement.parentElement.insertAdjacentHTML('afterbegin', `<span class="board-title">${currentName}</span>`);
-                createdElement.remove();
+                const createdElement = document.querySelector('#title-input');
+                createdElement.focus();
+                createdElement.addEventListener('blur', function () {
+                    createdElement.parentElement.insertAdjacentHTML('afterbegin', `<span class="board-title">${currentName}</span>`);
+                    createdElement.remove();
 
-                dom.changeElementIntoFormWhenClicked(parentElement.firstElementChild, parentElement, boardId);
-            })
-        }
-    });
+                    dom.changeElementIntoFormWhenClicked(parentElement.firstElementChild, parentElement, boardId);
+                })
+            }
+        });
     },
 };
