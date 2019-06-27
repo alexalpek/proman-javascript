@@ -159,29 +159,30 @@ export let dom = {
         addButton.addEventListener('click', function () {
             const boardNumber = document.querySelectorAll('.board').length + 1;
             let newSection = document.createElement('section');
-            newSection.classList.add('board');
-            newSection.setAttribute("data-id-num", `${boardNumber}`);
-            newSection.innerHTML = `<div class="board-header"><span class="board-title">Board ${boardNumber}</span>
-                    <button class="board-add card-add">Add Card</button>
-                    <button class="board-delete"><img class="icon" src="/static/images/trashboard.png" alt="remove board"></button>
-                    <button class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
-                </div>
-                <div id="board-${boardNumber}" class="board-columns">
-                </div>`;
-            let addCardButton = newSection.querySelector('.card-add');
-            addCardButton.addEventListener('click', dom.addCard);
-            document.querySelector('.board-container').appendChild(newSection);
-            dataHandler.createNewBoard({"title": `Board ${boardNumber}`, "to": "boards"});
-            let lastToggleButton = document.querySelector('.board:last-child .board-toggle');
-            lastToggleButton.addEventListener('click', function (event) {dom.toggleBoard(event)});
+                dataHandler._api_get('/get-board-id', function (response) {
+                    let boardId = response + 1
+                    newSection.classList.add('board');
+                    newSection.setAttribute("data-id-num", `${boardId}`);
+                    newSection.innerHTML = `<div class="board-header"><span class="board-title">Board ${boardNumber}</span>
+                            <button class="board-add card-add">Add Card</button>
+                            <button class="board-delete"><img class="icon" src="/static/images/trashboard.png" alt="remove board"></button>
+                            <button class="board-toggle"><i class="fas fa-chevron-down"><img class="icon" src="/static/images/close.png" alt="close" ></i></button>
+                        </div>
+                        <div id="board-${boardId}" class="board-columns">
+                        </div>`;
+                    document.querySelector('.board-container').appendChild(newSection);
+                    dataHandler.createNewBoard({"title": `Board ${boardNumber}`, "to": "boards"});
+                    let lastToggleButton = document.querySelector('.board:last-child .board-toggle');
+                    lastToggleButton.addEventListener('click', function (event) {dom.toggleBoard(event)});
 
-            const boardTitle = newSection.querySelector('.board-title');
-            const parentElement = boardTitle.parentElement;
-            const boardId = parentElement.nextElementSibling.getAttribute('id');
+                    const boardTitle = newSection.querySelector('.board-title');
+                    const parentElement = boardTitle.parentElement;
 
-            dom.changeElementIntoFormWhenClicked(boardTitle, parentElement, boardId);
-            let deleteButton = newSection.querySelector(".board-delete");
-            deleteButton.addEventListener('click', function (event) {dom.deleteBoard(event)})
+                    dom.changeElementIntoFormWhenClicked(boardTitle, parentElement, boardId);
+                    let deleteButton = newSection.querySelector(".board-delete");
+                    deleteButton.addEventListener('click', function (event) {dom.deleteBoard(event)})
+                });
+
         });
     },
     deleteCard: function (cardId) {

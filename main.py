@@ -94,6 +94,12 @@ def get_card_data():
     return data_handler.get_latest_card_id()
 
 
+@app.route("/get-board-id")
+@json_response
+def get_board_data():
+    return data_handler.get_latest_board_id()
+
+
 def main():
     app.run(debug=True)
 

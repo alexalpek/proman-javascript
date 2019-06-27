@@ -12,6 +12,16 @@ def get_latest_card_id(cursor):
 
 
 @connection.connection_handler
+def get_latest_board_id(cursor):
+    cursor.execute("""
+        SELECT boards_id_seq.last_value FROM boards_id_seq    
+    """)
+    boards_id = cursor.fetchone()
+    for i, k in boards_id.items():
+        return k
+
+
+@connection.connection_handler
 def get_card_status(cursor, status_id):
     cursor.execute("""
         SELECT title FROM statuses
