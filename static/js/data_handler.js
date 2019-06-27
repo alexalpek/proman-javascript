@@ -71,8 +71,8 @@ export let dataHandler = {
             callback(response)
         })
     },
-    getCard: function (cardId, callback) {
-        // the card is retrieved and then the callback function is called with the card
+    dropCard: function (cardData) {
+        this._api_send('/post-data', 'PUT', cardData)
     },
     createNewBoard: function (boardData) {
         // creates new board, saves it and calls the callback function with its data

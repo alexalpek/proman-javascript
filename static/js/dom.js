@@ -56,14 +56,14 @@ export let dom = {
 
         const toggleButtons = document.querySelectorAll('.board-toggle');
         for (let button of toggleButtons) {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function (event) {
                 dom.toggleBoard(event);
             })
         }
         dom.addBoard();
         let deleteButtons = document.querySelectorAll(".board-delete");
         for (let button of deleteButtons) {
-            button.addEventListener('click', function() {dom.deleteBoard(event)})
+            button.addEventListener('click', function(event) {dom.deleteBoard(event)})
         }
 
     },
@@ -92,7 +92,7 @@ export let dom = {
         }
         let cardsExisting = parentBoard.querySelectorAll(".card");
         for (let card of cardsExisting) {
-            card.addEventListener("dragstart", function () {dom.dragStartHandler(event)});
+            card.addEventListener("dragstart", function (event) {dom.dragStartHandler(event)});
         }
         let deleteButtons = parentBoard.querySelectorAll(".card-remove button");
         for (let button of deleteButtons) {
@@ -128,31 +128,31 @@ export let dom = {
         }
         let currentStatuses = statusContainer.querySelectorAll(".drop-zone");
         for (let status of currentStatuses) {
-            status.addEventListener("drop", function () {dom.dropHandler(event)});
-            status.addEventListener("dragover", function () {dom.dragOverHandler(event)})
+            status.addEventListener("drop", function (event) {dom.dropHandler(event)});
+            status.addEventListener("dragover", function (event) {dom.dragOverHandler(event)})
         }
     },
-    deleteBoard: function () {
-        const board = event.target.closest("section");
+    deleteBoard: function (event) {
+        const board = event.currentTarget.closest("section");
         let boardId = board.dataset.idNum;
         dataHandler.deleteBoard({"id": `${boardId}`, "to": "boards"});
         board.remove();
     },
     toggleBoard: function (event) {
         const button = event.currentTarget,
-            boardId = button.closest(".board").lastElementChild.id;
+            boardId = button.closest("section").lastElementChild.id;
         if (button.dataset.toggle === "visible") {
             button.dataset.toggle = "not-visible";
             button.innerHTML = `<img class="icon" src="/static/images/close.png" alt="close" >`;
             dom.clearStatusContainer(boardId);
             let cardAddButton = button.closest("section").querySelector(".card-add");
-            cardAddButton.removeEventListener('click', function() {dom.addCard()});
+            cardAddButton.removeEventListener('click', dom.addCard);
         } else {
             button.dataset.toggle = "visible";
             button.innerHTML = `<img class="icon" src="/static/images/view.png" alt="view" >`;
             dom.loadStatuses(boardId);
             let cardAddButton = button.closest("section").querySelector(".card-add");
-            cardAddButton.addEventListener('click', function() {dom.addCard()});}
+            cardAddButton.addEventListener('click', dom.addCard);}
     },
     addBoard: function () {
         const addButton = document.querySelector('#add-board');
@@ -169,11 +169,11 @@ export let dom = {
                 <div id="board-${boardNumber}" class="board-columns">
                 </div>`;
             let addCardButton = newSection.querySelector('.card-add');
-            addCardButton.addEventListener('click', function () {dom.addCard(event)});
+            addCardButton.addEventListener('click', dom.addCard);
             document.querySelector('.board-container').appendChild(newSection);
             dataHandler.createNewBoard({"title": `Board ${boardNumber}`, "to": "boards"});
             let lastToggleButton = document.querySelector('.board:last-child .board-toggle');
-            lastToggleButton.addEventListener('click', function () {dom.toggleBoard()});
+            lastToggleButton.addEventListener('click', function (event) {dom.toggleBoard(event)});
 
             const boardTitle = newSection.querySelector('.board-title');
             const parentElement = boardTitle.parentElement;
@@ -181,7 +181,7 @@ export let dom = {
 
             dom.changeElementIntoFormWhenClicked(boardTitle, parentElement, boardId);
             let deleteButton = newSection.querySelector(".board-delete");
-            deleteButton.addEventListener('click', function () {dom.deleteBoard(event)})
+            deleteButton.addEventListener('click', function (event) {dom.deleteBoard(event)})
         });
     },
     deleteCard: function (cardId) {
@@ -212,11 +212,25 @@ export let dom = {
             dropTargetCL = dropTarget.classList;
         if (dropTargetCL.contains("drop-zone")) {
             dropTarget.querySelector(".board-column-content").appendChild(card);
-        } else { alert("ALERT!")}
+            let newBoard = card.closest('section'),
+                newStatus = card.closest('div').parentElement,
+                siblingList = Array.from(newStatus.querySelectorAll(".card")).slice(1, -1),
+                newOrderId = card.parentElement.childElementCount -1,
+                newBoardId = newBoard.lastElementChild.id.replace(/\D/g,''),
+                newStatusId = newStatus.id;
+            for (let sibling of siblingList) {
+                sibling.dataset.order = sibling.previousSibling.className === "card" ? parseInt(sibling.previousSibling.dataset.order) + 1: 1 ;
+                dataHandler.dropCard({"id": sibling.id, "order_id": sibling.dataset.order, "to": "cards", "operation": "drop"})
+            }
+            dataHandler.dropCard({"id": card.id, "board_id": newBoardId, "status_id": newStatusId, "order_id": newOrderId, "to": "cards", "operation": "drop"});
+            card.dataset.order = newOrderId;
+            card.dataset.boardId = newBoardId;
+            card.dataset.statusId = newStatusId;
+        } else { alert("You can't do that!")}
 
     },
     addCard: function () {
-        const thisBoard = event.target.closest('section');
+        const thisBoard = this.closest('section');
         const boardColumn = thisBoard.querySelector('.board-columns');
         const newColumn = boardColumn.querySelector('.board-column');
         let boardId = thisBoard.dataset.idNum;
@@ -241,7 +255,7 @@ export let dom = {
                   <div class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
                   <div class="card-title">New Card ${numberOfCards}</div>
                   <div id="${cardId}" class="card-content"</div>`;
-            card.addEventListener("dragstart", function () {dom.dragStartHandler(event)});
+            card.addEventListener("dragstart", function (event) {dom.dragStartHandler(event)});
             newColumn.querySelector('.board-column-content').appendChild(card);
             let removeButtons = thisBoard.querySelectorAll(".card-remove button");
             for (let button of removeButtons) {
@@ -266,11 +280,7 @@ export let dom = {
         form.appendChild(input);
 
 
-        input.addEventListener('keydown', function(event) {
-            if (event.isComposing || event.key === 13) {
-                form.submit();
-            }
-        });
+
 
         form.addEventListener('submit', function () {dom.postDataForBoard()});
 

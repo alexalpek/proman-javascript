@@ -102,7 +102,19 @@ def edit_status(cursor, data):
 
 @connection.connection_handler
 def edit_card(cursor, data):
-    pass
+    if data['operation'] == "drop" and "board_id" in data.keys():
+        cursor.execute("""
+            UPDATE cards
+            SET board_id = %(board_id)s , status_id = %(status_id)s, card_order = %(order_id)s
+            WHERE id = %(id_)s;
+        """, {"id_": data['id'], "board_id": data['board_id'], "status_id": data['status_id'],
+              "order_id": data['order_id']})
+    elif data['operation'] == "drop":
+        cursor.execute("""
+            UPDATE cards
+            SET card_order = %(order_id)s
+            WHERE id = %(id_)s
+        """, {"id_": data['id'], "order_id": data['order_id']})
 
 
 @connection.connection_handler

@@ -75,6 +75,8 @@ def post_data():
     elif request.method == "PUT":
         if data['to'] == "boards":
             data_handler.rename_board(data)
+        if data['to'] == "cards":
+            data_handler.edit_card(data)
     elif request.method == "DELETE":
         if data['to'] == "boards":
             data_handler.delete_board(data)
