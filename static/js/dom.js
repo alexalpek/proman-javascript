@@ -81,7 +81,7 @@ export let dom = {
             statuses = parentBoard.children;
         for (const card of cards) {
             for (let status of statuses) {
-                if (parseInt(status.id) === card.status_id)
+                if (parseInt(status.dataset.statusId) === card.status_id)
                     status.lastElementChild.innerHTML += `
                         <div id="${card.id}" class="card" draggable="true" data-order="${card.card_order}" data-board-id="${card.board_id}" data-status-id="${card.status_id}">
                           <div class="card-remove"><button><img class="icon" src="/static/images/delete.png" alt="remove card"></button></div>
@@ -119,9 +119,9 @@ export let dom = {
         let statusList = '';
         for (let status of statuses) {
             statusList += `
-                <div id="${status.id}" class="board-column drop-zone" draggable="false">
+                <div data-status-id="${status.id}" class="board-column drop-zone" draggable="false">
                     <div class="board-column-title">${status.title}</div>
-                    <div id="${status.id}" class="board-column-content "></div>
+                    <div data-status-id="${status.id}" class="board-column-content "></div>
                 </div>     
             `;
             statusContainer.innerHTML = statusList;
@@ -217,7 +217,7 @@ export let dom = {
                 siblingList = Array.from(newStatus.querySelectorAll(".card")).slice(1, -1),
                 newOrderId = card.parentElement.childElementCount -1,
                 newBoardId = newBoard.lastElementChild.id.replace(/\D/g,''),
-                newStatusId = newStatus.id;
+                newStatusId = newStatus.dataset.statusId;
             for (let sibling of siblingList) {
                 sibling.dataset.order = sibling.previousSibling.className === "card" ? parseInt(sibling.previousSibling.dataset.order) + 1: 1 ;
                 dataHandler.dropCard({"id": sibling.id, "order_id": sibling.dataset.order, "to": "cards", "operation": "drop"})
