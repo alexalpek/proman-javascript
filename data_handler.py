@@ -61,9 +61,9 @@ def get_statuses(cursor):
 @connection.connection_handler
 def add_board(cursor, data, session):
     cursor.execute("""
-        INSERT INTO boards
-        VALUES (%(id)s, %(title)s, %(user_id)s)
-    """, {"id": data['id'], "title": data['title'], "user_id": session["id"]})
+        INSERT INTO boards (title, user_id)
+        VALUES (%(title)s, %(user_id)s)
+    """, {"title": data['title'], "user_id": session["id"]})
 
 
 @connection.connection_handler

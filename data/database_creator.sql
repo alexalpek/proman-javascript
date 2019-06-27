@@ -7,13 +7,13 @@ ALTER TABLE IF EXISTS ONLY public.boards
 
 
 DROP TABLE IF EXISTS public.boards;
-DROP SEQUENCE IF EXISTS public.boards_id_seq CASCADE ;
+DROP SEQUENCE IF EXISTS public.boards_id_seq CASCADE;
 DROP TABLE IF EXISTS public.cards;
 DROP SEQUENCE IF EXISTS public.cards_id_seq CASCADE;
 DROP TABLE IF EXISTS public.statuses;
 DROP SEQUENCE IF EXISTS public.statuses_id_seq CASCADE;
 DROP TABLE IF EXISTS public.users;
-DROP SEQUENCE IF EXISTS public.user_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS public.users_id_seq CASCADE;
 
 CREATE TABLE users
 (
@@ -47,16 +47,10 @@ CREATE TABLE statuses
 
 
 
-ALTER TABLE ONLY cards
-    ADD CONSTRAINT fk_card_status_id FOREIGN KEY (status_id) REFERENCES statuses (id) ON DELETE CASCADE,
-    ADD CONSTRAINT fk_card_board_id FOREIGN KEY (board_id) REFERENCES boards (id) ON DELETE CASCADE;
-ALTER TABLE ONLY boards
-    ADD CONSTRAINT fk_boards_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
-
 INSERT INTO boards
-VALUES (1, 'Board 1');
+VALUES (1, 'Board 1', 1);
 INSERT INTO boards
-VALUES (2, 'Board 2');
+VALUES (2, 'Board 2', 2);
 SELECT pg_catalog.setval('boards_id_seq', 2, true);
 
 INSERT INTO statuses
@@ -95,4 +89,15 @@ INSERT INTO cards
 VALUES (12, 2, 'done card 1', 3, 1);
 SELECT pg_catalog.setval('cards_id_seq', 12, true);
 
+INSERT INTO users
+VALUES (1, 'Alex', '$2b$12$xkyCOyI8YZvqgbP5SUv31eAB1VV4O.K8X1lu/C4YNTOoR0Q6S594u');
+INSERT INTO users
+VALUES (2, 'Jani', '$2b$12$kw7tqo8M5AYdJ/tW4HIVEeLWj3iEN/tc0VTeXV2R5SKwAomfYZk5i');
+SELECT pg_catalog.setval('users_id_seq', 2, true);
 
+
+ALTER TABLE ONLY cards
+    ADD CONSTRAINT fk_card_status_id FOREIGN KEY (status_id) REFERENCES statuses (id) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_card_board_id FOREIGN KEY (board_id) REFERENCES boards (id) ON DELETE CASCADE;
+ALTER TABLE ONLY boards
+    ADD CONSTRAINT fk_boards_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
